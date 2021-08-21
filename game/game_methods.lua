@@ -27,6 +27,119 @@ end
 --                              BOARD                             --
 --------------------------------------------------------------------
 
+--[[
+
+information = {
+    [game] = {
+        jogadores = {
+            [1] = {name = "Gustavo", score = 0, char = "x"},
+            [2] = {name = "Angels", score = 0, char = "o"},
+        }
+        tabuleiros = {
+            [1] = {
+                {"⦁", "⦁", "⦁"}, 
+                {"⦁", "⦁", "⦁"}, 
+                {"⦁", "⦁", "⦁"}
+            },
+            [2] = {
+                {"⦁", "⦁", "⦁"}, 
+                {"⦁", "⦁", "⦁"}, 
+                {"⦁", "⦁", "⦁"}
+            }
+        }
+    }
+}
+
+]]--
+
+function methods:check_draw_board(index_board)
+    local boards = information[self].boards
+    local players = information[self].players
+    local lines = {
+        [1] = false,
+        [2] = false,
+        [3] = false
+    }
+
+    if #players == 0 and #boards == 0 then
+        io.write("[check_draw_board]: Não existe players/boards no seu game.")
+        return false
+    end
+
+    local board = boards[index_board]
+
+    if not board then
+        io.write("[check_draw_board]: Não existe o board index: ", tostring(index_board))
+        return false
+    end
+
+    --[[ 
+        Esse for inteiro, vai servir para acessar cada posição do board
+        se alguma ainda tiver vazia, então não deu velha.
+    ]]
+
+    for line = 1, 3 do 
+        for column = 1, 3 do
+            if board[line][column] == "⦁" then
+                return false
+            end
+        end
+    end
+
+    return true
+end
+
+function methods:check_win_board(index_board)
+    local boards = information[self].boards
+    local players = information[self].players
+
+    if #players == 0 and #boards == 0 then
+        io.write("[check_win_board]: Não existe players/boards no seu game.")
+        return false
+    end
+
+    local board = boards[index_board]
+
+    if not board then
+        io.write("[check_win_board]: Não existe o board index: ", tostring(index_board))
+        return false
+    end
+
+    for p = 1, 2 do -- Players
+        for i = 1, 3 do
+            if board[i][1] == players[p].char and board[i][2] == players[p].char and board[i][3] == players[p].char then -- VERIFICAÇÂO VERTICAL
+
+                local player_index = self:get_player_with_char(board[i][1]) -- Pegar o Jogador de acordo com o caracter
+                players[player_index].score = players[player_index].score + 1 -- Incrementar o Score do Jogador que venceu
+                return true, player_index -- Retornar true, o index do Player de acordo com o caracter
+
+            elseif board[1][i] == players[p].char and board[2][i] == players[p].char and board[3][i] == players[p].char then -- VERIFICAÇÂO HORIZONTAL
+
+                local player_index = self:get_player_with_char(board[1][i]) -- Pegar o Jogador de acordo com o caracter
+                players[player_index].score = players[player_index].score + 1 -- Incrementar o Score do Jogador que venceu
+                return true, player_index -- Retornar true, o index do Player de acordo com o caracter
+            
+            end
+        end
+
+        if board[1][1] == players[p].char and board[2][2] == players[p].char and board[3][3] == players[p].char then -- VERIFICAÇÂO CRUZADA
+            
+            local player_index = self:get_player_with_char(board[1][1]) -- Pegar o Jogador de acordo com o caracter
+            players[player_index].score = players[player_index].score + 1 -- Incrementar o Score do Jogador que venceu
+            return true, player_index -- Retornar true, o index do Player de acordo com o caracter
+
+        elseif board[1][3] == players[p].char and board[2][2] == players[p].char and board[3][1] == players[p].char then -- VERIFICAÇÂO CRUZADA
+
+            local player_index = self:get_player_with_char(board[1][3]) -- Pegar o Jogador de acordo com o caracter
+            players[player_index].score = players[player_index].score + 1 -- Incrementar o Score do Jogador que venceu
+            return true, player_index -- Retornar true, o index do Player de acordo com o caracter
+            
+        end
+    end
+    
+    return false
+end
+
 function methods:create_board()
     local boards = information[self].boards
     local _board = {{"⦁", "⦁", "⦁"}, {"⦁", "⦁", "⦁"}, {"⦁", "⦁", "⦁"}}
@@ -65,61 +178,28 @@ function methods:set_position_board(index_board, index_player, height, width)
     local players = information[self].players
     
     if #players == 0 or not players[index_player] then
-        io.write("[print_board]: ", "Erro no players, tente novamente, player: ", tostring(index_player), "\n") 
+        io.write("[set_position_board]: ", "Erro no players, tente novamente, player: ", tostring(index_player), "\n") 
         return false
     end
 
     local player = players[index_player]
     
     if not board or not board[height][width] then
-        io.write("[print_board]: ","Erro no tabuleiro, tente novamente, board: ", tostring(index_board), "\n")
+        io.write("[set_position_board]: ","Erro no tabuleiro, tente novamente, board: ", tostring(index_board), "\n")
         return false
     end
 
     if board[height][width] ~= "⦁" then
-        io.write("[print_board]: ", "Esse espaço já está sendo ocupado", "\n")
+        io.write("[set_position_board]: ", "Esse espaço já está sendo ocupado", "\n")
         return false
     end
 
-    io.write("[print_board]: ",string.format("Tabuleiro modificado com sucesso, altura: %s linha: %s", height, width), "\n")
+    io.write("[set_position_board]: ",string.format("Tabuleiro modificado com sucesso, altura: %s linha: %s", height, width), "\n")
     
     board[height][width] = player.char
 
     return true
 end
-
-function methods:verify_board()
-   --asdasd
-   --asdasd
-   --asdasd
-   --asdasd
-end
-
---[[
-
-information = {
-    [game] = {
-        jogadores = {
-            [1] = {name = "Gustavo", score = 0, char = "x"},
-            [2] = {name = "Angels", score = 0, char = "o"},
-        }
-    }
-}
-
-]]--
-
---[[
-    
-
-    boards = 
-    {
-             X  X  X
-        Y = {x, x, x}
-        Y = {x, x, x}
-        Y = {x, x, x}
-    }
-
-]]
 
 --------------------------------------------------------------------
 --                             PLAYERS                            --
@@ -203,9 +283,17 @@ end
 --------------------------------------------------------------------
 
 function methods:get_name_player(index) -- Método para pegar o nome do jogador de acordo com o index do mesmo.
-    local player = information[self].players[index]
+    local players = information[self].players
+
+    if #players == 0 then
+        io.write("[get_name_player]: Não existe players no seu game.")
+        return false
+    end
+
+    local player = players[index]
 
     if not player then
+        io.write("[get_name_player]: Não existe um player no index: ", tostring(index))
         return false
     end
 
@@ -213,13 +301,38 @@ function methods:get_name_player(index) -- Método para pegar o nome do jogador 
 end
 
 function methods:get_score_player(index) -- Método para pegar o score do jogador de acordo com o index do mesmo.
-    local player = information[self].players[index]
+    local players = information[self].players
+
+    if #players == 0 then
+        io.write("[get_score_player]: Não existe players no seu game.")
+        return false
+    end
+
+    local player = players[index]
 
     if not player then
+        io.write("[get_score_player]: Não existe um player no index: ", tostring(index))
         return false
     end
 
     return player.score
+end
+
+function methods:get_player_with_char(char)
+    local players = information[self].players
+
+    if #players == 0 then
+        io.write("[get_player_with_char]: Não existe players no seu game.")
+        return false
+    end
+
+    for i = 1, 2 do
+        if players[i].char == char then
+            return i
+        end
+    end
+
+    return false
 end
 
 --------------------------------------------------------------------
@@ -252,26 +365,27 @@ function methods:input_position_board(index_player)
         first = nil, 
         second = nil
     }
+
     if #players == 0 or not players[index_player] then
-        io.write("[print_board]: ", "Erro no players, tente novamente, player: ", tostring(index_player), "\n")
+        io.write("[input_local_board]: ", "Erro no players, tente novamente, player: ", tostring(index_player), "\n")
         return false
     end
     repeat
         repeat
-            io.write("[input_local_board]: Exemplo de como deve ser: A1", "\n")
-            io.write(string.format("[input_local_board]: Jogador %s qual posição você quer preencher?: ", tostring(index_player)))
+            io.write("[input_local_board]: Opções: (A1, A2, A3) - (B1, B2, B3) - (C1, C2, C3)", "\n")
+            io.write(string.format("[input_local_board]: %s qual posição você quer preencher?: ", self:get_name_player(index_player)))
             position.arg = io.read() -- Pede um Input para o Terminal dos Jogadores, para setagem do name.
         until position.arg and #position.arg == 2 -- Verificação se o name foi setado corretamente e verificando o tamanho da string.
 
         position.first = position.arg:sub(1, 1)
         position.second = position.arg:sub(2, 2)
 
-        if inputs.first[position.first] and inputs.second[position.second] then
+        if inputs.second[position.second] and inputs.first[position.first]then
             break
         end
     until false
 
-    return inputs.first[position.first], inputs.second[position.second]
+    return inputs.second[position.second], inputs.first[position.first]
 end
 
 return methods -- Retorna a referência da tabela dos métodos.
