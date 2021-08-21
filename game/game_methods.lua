@@ -27,31 +27,6 @@ end
 --                              BOARD                             --
 --------------------------------------------------------------------
 
---[[
-
-information = {
-    [game] = {
-        jogadores = {
-            [1] = {name = "Gustavo", score = 0, char = "x"},
-            [2] = {name = "Angels", score = 0, char = "o"},
-        }
-        tabuleiros = {
-            [1] = {
-                {"⦁", "⦁", "⦁"}, 
-                {"⦁", "⦁", "⦁"}, 
-                {"⦁", "⦁", "⦁"}
-            },
-            [2] = {
-                {"⦁", "⦁", "⦁"}, 
-                {"⦁", "⦁", "⦁"}, 
-                {"⦁", "⦁", "⦁"}
-            }
-        }
-    }
-}
-
-]]--
-
 function methods:check_draw_board(index_board)
     local boards = information[self].boards
     local players = information[self].players
