@@ -1,4 +1,4 @@
-local information = require 'information' -- Para salvar as informações de cada instância de jogo.
+local information = require 'game/information' -- Para salvar as informações de cada instância de jogo.
 local inputs = require 'game/game_inputs'
 
 local methods = {} -- Para salvar os métodos utilizados pelo game.
